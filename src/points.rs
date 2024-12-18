@@ -1,5 +1,11 @@
 use crate::utils::*;
 
+pub struct Vector3D {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+}
+
 pub struct Point2D {
     pub x: i32,
     pub y: i32,
@@ -21,65 +27,79 @@ impl Point2D {
     }
 }
 
+impl Vector3D {
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
+        Vector3D { x, y, z }
+    }
+}
+
 impl Point3D {
     pub fn new(x: i32, y: i32, z: i32) -> Self {
         Point3D { x, y, z }
     }
 
     pub fn rotate_y(&mut self, angle: f32) {
-        let x_new = (self.x as f32 * angle.cos() + self.z as f32 * angle.sin());
-        let z_new = (-self.x as f32 * angle.sin() + self.z as f32 * angle.cos());
+        let x_new = self.x as f32 * angle.cos() + self.z as f32 * angle.sin();
+        let z_new = -self.x as f32 * angle.sin() + self.z as f32 * angle.cos();
 
         self.x = x_new as i32;
         self.z = z_new as i32;
     }
 
+    pub fn rotate_x(&mut self, angle: f32) {
+        let y_new = self.y as f32 * angle.cos() + self.z as f32 * angle.sin();
+        let z_new = -self.y as f32 * angle.sin() + self.z as f32 * angle.cos();
+
+        self.y = y_new as i32;
+        self.z = z_new as i32;
+    }
+
+    pub fn rotate_z(&mut self, angle: f32) {
+        let x_new = self.x as f32 * angle.cos() + self.y as f32 * angle.sin();
+        let y_new = -self.x as f32 * angle.sin() + self.y as f32 * angle.cos();
+
+        self.y = y_new as i32;
+        self.x = x_new as i32;
+    }
+
     pub fn cube_vertices(center: &Point3D) -> [Point3D; 8] {
         let half_side = CUBE_LINE_LEN / 2;
         [
-            // Bottom-front-left
             Point3D {
                 x: center.x - half_side,
                 y: center.y - half_side,
                 z: center.z - half_side,
             },
-            // Bottom-front-right
             Point3D {
                 x: center.x + half_side,
                 y: center.y - half_side,
                 z: center.z - half_side,
             },
-            // Bottom-back-left
             Point3D {
                 x: center.x - half_side,
                 y: center.y - half_side,
                 z: center.z + half_side,
             },
-            // Bottom-back-right
             Point3D {
                 x: center.x + half_side,
                 y: center.y - half_side,
                 z: center.z + half_side,
             },
-            // Top-front-left
             Point3D {
                 x: center.x - half_side,
                 y: center.y + half_side,
                 z: center.z - half_side,
             },
-            // Top-front-right
             Point3D {
                 x: center.x + half_side,
                 y: center.y + half_side,
                 z: center.z - half_side,
             },
-            // Top-back-left
             Point3D {
                 x: center.x - half_side,
                 y: center.y + half_side,
                 z: center.z + half_side,
             },
-            // Top-back-right
             Point3D {
                 x: center.x + half_side,
                 y: center.y + half_side,

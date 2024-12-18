@@ -1,3 +1,4 @@
+pub const FRAMERATE: u32 = 60;
 pub const PIXEL_SIZE: i32 = 3;
 pub const SCREEN_WIDTH: i32 = 800;
 pub const SCREEN_HEIGTH: i32 = 600;
