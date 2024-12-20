@@ -5,7 +5,6 @@ use points::*;
 use utils::*;
 
 use raylib::prelude::*;
-use std::f64::consts::PI;
 
 fn main() {
     let (mut rl, thread) = raylib::init()
@@ -27,6 +26,7 @@ fn main() {
         let center = Point3D::new(0, 0, 0);
 
         draw_pixel(&mut d, &center);
+        // draw_axis(&mut d, &center);
         draw_cube(&mut d, &center, &angle);
 
         match state {
@@ -63,11 +63,17 @@ fn draw_pixel(d: &mut RaylibDrawHandle, point: &Point3D) {
     d.draw_circle(point_t.x, point_t.y, PIXEL_SIZE as f32, Color::WHITE);
 }
 
-fn draw_line(d: &mut RaylibDrawHandle, begin: &Point3D, end: &Point3D) {
+fn draw_line(d: &mut RaylibDrawHandle, begin: &Point3D, end: &Point3D, color: Color) {
     let begin_t = Point2D::from_3d(begin);
     let end_t = Point2D::from_3d(end);
 
-    d.draw_line(begin_t.x, begin_t.y, end_t.x, end_t.y, Color::WHITE);
+    d.draw_line(begin_t.x, begin_t.y, end_t.x, end_t.y, color);
+}
+
+fn draw_axis(d: &mut RaylibDrawHandle, center: &Point3D) {
+    draw_line(d, center, &Point3D::new(CUBE_LINE_LEN, 0, 0), Color::BLUE);
+    draw_line(d, center, &Point3D::new(0, -CUBE_LINE_LEN, 0), Color::RED);
+    draw_line(d, center, &Point3D::new(0, 0, CUBE_LINE_LEN), Color::GREEN);
 }
 
 fn draw_cube(d: &mut RaylibDrawHandle, start_p: &Point3D, angle: &Vector3D) {
@@ -98,6 +104,6 @@ fn draw_cube(d: &mut RaylibDrawHandle, start_p: &Point3D, angle: &Vector3D) {
     ];
 
     for &(start_ind, end_ind) in edges.iter() {
-        draw_line(d, &points[start_ind], &points[end_ind]);
+        draw_line(d, &points[start_ind], &points[end_ind], Color::WHITE);
     }
 }
