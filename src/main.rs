@@ -22,7 +22,9 @@ fn main() {
 
     let mut angle = Vector3D::new(0.0, 0.0, 0.0);
     let mut offset = 0;
-    let mut state = State::YAxisRot;
+    let mut offset2d = 0;
+    let mut state3d = State3D::YAxisRot;
+    let mut state2d = State2D::HouseInit;
     'running: loop {
         for event in context.event_pump.poll_iter() {
             match event {
@@ -38,50 +40,75 @@ fn main() {
                 _ => {}
             }
         }
-        draw_canvas1(&mut canvas1, &mut angle, offset, &state);
-        draw_canvas2(&mut canvas2);
+        draw_canvas1(&mut canvas1, &mut angle, offset, &state3d);
+        draw_canvas2(&mut canvas2, offset2d, &state2d);
 
-        match state {
-            State::YAxisRot => {
+        match state3d {
+            State3D::YAxisRot => {
                 angle.y += ROTATION;
                 if angle.angle_overshoot() {
-                    state = State::FromYToX;
+                    state3d = State3D::FromYToX;
                     angle.zero();
                 }
             }
-            State::FromYToX => {
+            State3D::FromYToX => {
                 offset += 1;
                 if offset >= 100 {
                     offset = 0;
-                    state = State::XAxisRot;
+                    state3d = State3D::XAxisRot;
                 }
             }
-            State::XAxisRot => {
+            State3D::XAxisRot => {
                 angle.x += ROTATION;
                 if angle.angle_overshoot() {
-                    state = State::FromXToZ;
+                    state3d = State3D::FromXToZ;
                     angle.zero();
                 }
             }
-            State::FromXToZ => {
+            State3D::FromXToZ => {
                 offset += 1;
                 if offset >= 200 {
                     offset = 0;
-                    state = State::ZAxisRot;
+                    state3d = State3D::ZAxisRot;
                 }
             }
-            State::ZAxisRot => {
+            State3D::ZAxisRot => {
                 angle.z += ROTATION;
                 if angle.angle_overshoot() {
-                    state = State::FromZToY;
+                    state3d = State3D::FromZToY;
                     angle.zero();
                 }
             }
-            State::FromZToY => {
+            State3D::FromZToY => {
                 offset += 1;
                 if offset >= 100 {
                     offset = 0;
-                    state = State::YAxisRot;
+                    state3d = State3D::YAxisRot;
+                }
+            }
+        }
+
+        match state2d {
+            State2D::HouseInit => {
+                state2d = State2D::WindowStrLeft;
+                offset2d = 0;
+            }
+            State2D::WindowStrLeft => {
+                offset2d += 1;
+                if offset2d >= 20 {
+                    state2d = State2D::WindowStrRight;
+                }
+            }
+            State2D::WindowStrRight => {
+                offset2d -= 1;
+                if offset2d <= -20 {
+                    state2d = State2D::WindowSettle;
+                }
+            }
+            State2D::WindowSettle => {
+                offset2d += 1;
+                if offset2d >= 0 {
+                    state2d = State2D::HouseInit;
                 }
             }
         }

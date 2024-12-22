@@ -3,11 +3,11 @@ use crate::points::*;
 use crate::utils::*;
 use sdl2::pixels::Color;
 
-pub fn draw_canvas1(canvas: &mut Canvas, angle: &mut Vector3D, offset: i32, state: &State) {
+pub fn draw_canvas1(canvas: &mut Canvas, angle: &mut Vector3D, offset: i32, state: &State3D) {
     canvas.clear();
 
     match state {
-        State::YAxisRot => {
+        State3D::YAxisRot => {
             let center_c = Point3D::new(100, 0, -100);
             let center_p = Point3D::new(-100, 0, 100);
 
@@ -20,14 +20,14 @@ pub fn draw_canvas1(canvas: &mut Canvas, angle: &mut Vector3D, offset: i32, stat
             canvas.draw_cube(&center_c, &angle);
             canvas.draw_pyramid(&center_p, &angle);
         }
-        State::FromYToX => {
+        State3D::FromYToX => {
             let center_c = Point3D::new(100 - offset, 0 + offset, -100 + offset);
             let center_p = Point3D::new(-100 + offset, 0 - offset, 100 - offset);
 
             canvas.draw_cube(&center_c, &angle);
             canvas.draw_pyramid(&center_p, &angle);
         }
-        State::XAxisRot => {
+        State3D::XAxisRot => {
             let center_c = Point3D::new(0, 100, 0);
             let center_p = Point3D::new(0, -100, 0);
 
@@ -40,14 +40,14 @@ pub fn draw_canvas1(canvas: &mut Canvas, angle: &mut Vector3D, offset: i32, stat
             canvas.draw_cube(&center_c, &angle);
             canvas.draw_pyramid(&center_p, &angle);
         }
-        State::FromXToZ => {
+        State3D::FromXToZ => {
             let center_c = Point3D::new(0, 100 - offset, 0);
             let center_p = Point3D::new(0, -100 + offset, 0);
 
             canvas.draw_cube(&center_c, &angle);
             canvas.draw_pyramid(&center_p, &angle);
         }
-        State::ZAxisRot => {
+        State3D::ZAxisRot => {
             let center_c = Point3D::new(0, -100, 0);
             let center_p = Point3D::new(0, 100, 0);
 
@@ -60,7 +60,7 @@ pub fn draw_canvas1(canvas: &mut Canvas, angle: &mut Vector3D, offset: i32, stat
             canvas.draw_cube(&center_c, &angle);
             canvas.draw_pyramid(&center_p, &angle);
         }
-        State::FromZToY => {
+        State3D::FromZToY => {
             let center_c = Point3D::new(0 + offset, -100 + offset, 0 - offset);
             let center_p = Point3D::new(0 - offset, 100 - offset, 0 + offset);
 
@@ -70,91 +70,59 @@ pub fn draw_canvas1(canvas: &mut Canvas, angle: &mut Vector3D, offset: i32, stat
     }
 }
 
-pub fn draw_canvas2(canvas: &mut Canvas) {
+pub fn draw_canvas2(canvas: &mut Canvas, offset: i32, state: &State2D) {
     canvas.clear();
 
-    let center_circ = Point2D::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGTH as i32 / 2);
-    let radius = 50;
-    canvas.draw_line_2d(
-        &Point2D::new(center_circ.x, center_circ.y - 2 * radius),
-        &Point2D::new(center_circ.x, center_circ.y + 2 * radius),
-        Color::RGB(252, 128, 5),
-    );
-    canvas.draw_line_2d(
-        &Point2D::new(center_circ.x - 2 * radius, center_circ.y),
-        &Point2D::new(center_circ.x + 2 * radius, center_circ.y),
-        Color::RGB(252, 128, 5),
-    );
-    canvas.draw_line_2d(
-        &Point2D::new(center_circ.x + 2 * radius, center_circ.y - 2 * radius),
-        &Point2D::new(center_circ.x - 2 * radius, center_circ.y + 2 * radius),
-        Color::RGB(252, 128, 5),
-    );
-    canvas.draw_line_2d(
-        &Point2D::new(center_circ.x + 2 * radius, center_circ.y + 2 * radius),
-        &Point2D::new(center_circ.x - 2 * radius, center_circ.y - 2 * radius),
-        Color::RGB(252, 128, 5),
-    );
-    canvas.draw_pixel(&center_circ, Color::BLUE);
-    canvas.draw_circle(&center_circ, radius, Color::WHITE);
-    canvas.draw_rect(
-        &Point2D::new(center_circ.x - 2 * radius, center_circ.y - 2 * radius),
-        4 * radius,
-        4 * radius,
-        Color::WHITE,
-    );
-    // Draw Upper Triangle
-    let peak_up = Point2D::new(center_circ.x, center_circ.y - 2 * radius - 173);
-    canvas.draw_line_2d(
-        &Point2D::new(center_circ.x - 2 * radius, center_circ.y - 2 * radius),
-        &peak_up,
-        Color::WHITE,
-    );
-    canvas.draw_line_2d(
-        &Point2D::new(center_circ.x + 2 * radius, center_circ.y - 2 * radius),
-        &peak_up,
-        Color::WHITE,
-    );
-    // Draw Lower Triangle
-    let peak_down = Point2D::new(center_circ.x, center_circ.y + 2 * radius + 173);
-    canvas.draw_line_2d(
-        &Point2D::new(center_circ.x - 2 * radius, center_circ.y + 2 * radius),
-        &peak_down,
-        Color::WHITE,
-    );
-    canvas.draw_line_2d(
-        &Point2D::new(center_circ.x + 2 * radius, center_circ.y + 2 * radius),
-        &peak_down,
-        Color::WHITE,
-    );
-    // Draw Left Triangle
-    let peak_left = Point2D::new(center_circ.x - 2 * radius - 173, center_circ.y);
-    canvas.draw_line_2d(
-        &Point2D::new(center_circ.x - 2 * radius, center_circ.y - 2 * radius),
-        &peak_left,
-        Color::WHITE,
-    );
-    canvas.draw_line_2d(
-        &Point2D::new(center_circ.x - 2 * radius, center_circ.y + 2 * radius),
-        &peak_left,
-        Color::WHITE,
-    );
-    // Draw Right Triangle
-    let peak_left = Point2D::new(center_circ.x + 2 * radius + 173, center_circ.y);
-    canvas.draw_line_2d(
-        &Point2D::new(center_circ.x + 2 * radius, center_circ.y - 2 * radius),
-        &peak_left,
-        Color::WHITE,
-    );
-    canvas.draw_line_2d(
-        &Point2D::new(center_circ.x + 2 * radius, center_circ.y + 2 * radius),
-        &peak_left,
-        Color::WHITE,
-    );
-    // Draw Outer Circle
-    canvas.draw_circle(
-        &center_circ,
-        2 * radius + 173 + PIXEL_SIZE as i32,
-        Color::BLUE,
-    );
+    let center_scr = Point2D::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGTH as i32 / 2);
+
+    let rect_w = 350;
+    let rect_h = 250;
+
+    // House Base
+    let rect_x = center_scr.x - rect_w / 2;
+    let rect_y = center_scr.y - rect_h / 2 + 50;
+    let rect_p = Point2D::new(rect_x, rect_y);
+
+    // Triangle Roof
+    let tri_p1 = Point2D::new(rect_p.x - 30, rect_p.y);
+    let tri_p2 = Point2D::new(rect_p.x + rect_w + 30, rect_p.y);
+    let tri_p3 = Point2D::new(center_scr.x, rect_p.y - 150);
+
+    // Windows Circle
+    let radius = 40;
+    let mut radius1 = radius / 2;
+    let mut radius2 = radius / 2;
+    let c1_x = center_scr.x - rect_w / 4;
+    let c2_x = center_scr.x + rect_w / 4;
+    let c_y = center_scr.y + 40 - rect_h / 8;
+    let center_c1 = Point2D::new(c1_x, c_y);
+    let center_c2 = Point2D::new(c2_x, c_y);
+
+    // Door
+    let door_w = 50;
+    let door_h = 100;
+    let door_x = center_scr.x - door_w / 2;
+    let door_y = center_scr.y - door_h + 50 + rect_h / 2;
+    let door_p = Point2D::new(door_x, door_y);
+
+    match state {
+        State2D::HouseInit => {}
+        State2D::WindowStrLeft | State2D::WindowStrRight | State2D::WindowSettle => {
+            radius1 -= offset;
+            radius2 += offset;
+        }
+    }
+
+    // Draw Order
+    // Door
+    canvas.draw_rect(&door_p, door_w, door_h, Color::MAGENTA);
+    // House Base
+    canvas.draw_rect(&rect_p, rect_w, rect_h, Color::WHITE);
+    // Roof
+    canvas.draw_line_2d(&tri_p1, &tri_p2, Color::RED);
+    canvas.draw_line_2d(&tri_p2, &tri_p3, Color::RED);
+    canvas.draw_line_2d(&tri_p1, &tri_p3, Color::RED);
+    // Windows
+    canvas.draw_circle(&center_c1, radius1, Color::CYAN);
+    canvas.draw_circle(&center_c2, radius2, Color::CYAN);
 }

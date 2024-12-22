@@ -9,12 +9,18 @@ pub const CUBE_LINE_LEN: i32 = 100;
 pub const PYRA_LINE_LEN: i32 = 100;
 pub const ROTATION: f32 = 0.02;
 
-#[derive(Debug)]
-pub enum State {
+pub enum State3D {
     YAxisRot,
     FromYToX,
     XAxisRot,
     FromXToZ,
     ZAxisRot,
     FromZToY,
+}
+
+pub enum State2D {
+    HouseInit,
+    WindowStrLeft,
+    WindowStrRight,
+    WindowSettle,
 }
