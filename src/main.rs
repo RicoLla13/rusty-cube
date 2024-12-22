@@ -37,9 +37,10 @@ fn main() {
         canvas.clear();
 
         let center = Point3D::new(0, 0, 0);
-        canvas.draw_pixel(Point2D::from_3d(&center), Color::WHITE);
 
-        canvas.draw_cube(&center, &angle);
+        // canvas.draw_cube(&center, &angle);
+        canvas.draw_pyramid(&center, &Vector3D::new(0.0, 0.0, 0.0));
+        canvas.draw_pixel(Point2D::from_3d(&center), Color::RED);
 
         match state {
             0 => {

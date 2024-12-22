@@ -112,4 +112,38 @@ impl Point3D {
             },
         ]
     }
+
+    pub fn pyramid_vertices(center: &Point3D) -> [Point3D; 5] {
+        let half_side = PYRA_LINE_LEN / 2;
+
+        [
+            // Base Points
+            Point3D {
+                x: center.x - half_side,
+                y: center.y + half_side,
+                z: center.z - half_side,
+            },
+            Point3D {
+                x: center.x + half_side,
+                y: center.y + half_side,
+                z: center.z - half_side,
+            },
+            Point3D {
+                x: center.x + half_side,
+                y: center.y + half_side,
+                z: center.z + half_side,
+            },
+            Point3D {
+                x: center.x - half_side,
+                y: center.y + half_side,
+                z: center.z + half_side,
+            },
+            // Pyramid Apex
+            Point3D {
+                x: center.x,
+                y: center.y - half_side,
+                z: center.z,
+            },
+        ]
+    }
 }

@@ -124,6 +124,27 @@ impl Canvas {
         }
     }
 
+    pub fn draw_pyramid(&mut self, center: &Point3D, angle: &Vector3D) {
+        let points = Point3D::pyramid_vertices(center);
+
+        let edges = [
+            // Base
+            (0, 1),
+            (1, 2),
+            (2, 3),
+            (3, 0),
+            // Apex links
+            (0, 4),
+            (1, 4),
+            (2, 4),
+            (3, 4),
+        ];
+
+        for &(start_ind, end_ind) in edges.iter() {
+            self.draw_line(&points[start_ind], &points[end_ind], Color::WHITE);
+        }
+    }
+
     pub fn clear(&mut self) {
         self.canvas.set_draw_color(Color::BLACK);
         self.canvas.clear();

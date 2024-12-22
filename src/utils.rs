@@ -7,3 +7,4 @@ pub const SCREEN_HEIGTH: u32 = 600;
 pub const X_OFFSET: u32 = SCREEN_WIDTH / 2;
 pub const Y_OFFSET: u32 = SCREEN_HEIGTH / 2;
 pub const CUBE_LINE_LEN: i32 = 100;
+pub const PYRA_LINE_LEN: i32 = 100;
