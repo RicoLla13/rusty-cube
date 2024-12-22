@@ -19,9 +19,9 @@ fn main() {
     let mut canvas1 = context.new_canvas(&"3D Shapes");
     let mut canvas2 = context.new_canvas(&"2D Shapes");
 
-    let mut frame_count = 0;
-
     let mut angle = Vector3D::new(0.0, 0.0, 0.0);
+    let mut offset = 0;
+    let mut state = State::YAxisRot;
     'running: loop {
         for event in context.event_pump.poll_iter() {
             match event {
@@ -37,12 +37,52 @@ fn main() {
                 _ => {}
             }
         }
-        draw_canvas1(&mut canvas1, &mut angle);
+        draw_canvas1(&mut canvas1, &mut angle, offset, &state);
         draw_canvas2(&mut canvas2);
 
-        frame_count += 1;
-        if frame_count > FRAMERATE {
-            frame_count = 0;
+        match state {
+            State::YAxisRot => {
+                angle.y += ROTATION;
+                if angle.angle_overshoot() {
+                    state = State::FromYToX;
+                    angle.zero();
+                }
+            }
+            State::FromYToX => {
+                offset += 1;
+                if offset >= 100 {
+                    offset = 0;
+                    state = State::XAxisRot;
+                }
+            }
+            State::XAxisRot => {
+                angle.x += ROTATION;
+                if angle.angle_overshoot() {
+                    state = State::FromXToZ;
+                    angle.zero();
+                }
+            }
+            State::FromXToZ => {
+                offset += 1;
+                if offset >= 200 {
+                    offset = 0;
+                    state = State::ZAxisRot;
+                }
+            }
+            State::ZAxisRot => {
+                angle.z += ROTATION;
+                if angle.angle_overshoot() {
+                    state = State::FromZToY;
+                    angle.zero();
+                }
+            }
+            State::FromZToY => {
+                offset += 1;
+                if offset >= 100 {
+                    offset = 0;
+                    state = State::YAxisRot;
+                }
+            }
         }
 
         canvas1.present();
@@ -51,22 +91,71 @@ fn main() {
     }
 }
 
-fn draw_canvas1(canvas: &mut Canvas, angle: &mut Vector3D) {
+fn draw_canvas1(canvas: &mut Canvas, angle: &mut Vector3D, offset: i32, state: &State) {
     canvas.clear();
 
-    let center_c = Point3D::new(70, 0, -70);
-    let center_p = Point3D::new(-70, 0, 70);
+    match state {
+        State::YAxisRot => {
+            let center_c = Point3D::new(100, 0, -100);
+            let center_p = Point3D::new(-100, 0, 100);
 
-    canvas.draw_line_3d(
-        &Point3D::new(0, 100, 0),
-        &Point3D::new(0, -100, 0),
-        Color::RED,
-    );
-    canvas.draw_cube(&center_c, &angle);
-    canvas.draw_pyramid(&center_p, &angle);
+            // Y axis
+            canvas.draw_line_3d(
+                &Point3D::new(0, -100, 0),
+                &Point3D::new(0, 100, 0),
+                Color::RED,
+            );
+            canvas.draw_cube(&center_c, &angle);
+            canvas.draw_pyramid(&center_p, &angle);
+        }
+        State::FromYToX => {
+            let center_c = Point3D::new(100 - offset, 0 + offset, -100 + offset);
+            let center_p = Point3D::new(-100 + offset, 0 - offset, 100 - offset);
 
-    angle.y += ROTATION;
-    angle.angle_overshoot();
+            canvas.draw_cube(&center_c, &angle);
+            canvas.draw_pyramid(&center_p, &angle);
+        }
+        State::XAxisRot => {
+            let center_c = Point3D::new(0, 100, 0);
+            let center_p = Point3D::new(0, -100, 0);
+
+            // X axis
+            canvas.draw_line_3d(
+                &Point3D::new(-100, 0, 0),
+                &Point3D::new(100, 0, 0),
+                Color::BLUE,
+            );
+            canvas.draw_cube(&center_c, &angle);
+            canvas.draw_pyramid(&center_p, &angle);
+        }
+        State::FromXToZ => {
+            let center_c = Point3D::new(0, 100 - offset, 0);
+            let center_p = Point3D::new(0, -100 + offset, 0);
+
+            canvas.draw_cube(&center_c, &angle);
+            canvas.draw_pyramid(&center_p, &angle);
+        }
+        State::ZAxisRot => {
+            let center_c = Point3D::new(0, -100, 0);
+            let center_p = Point3D::new(0, 100, 0);
+
+            // Z axis
+            canvas.draw_line_3d(
+                &Point3D::new(0, 0, 100),
+                &Point3D::new(0, 0, -100),
+                Color::GREEN,
+            );
+            canvas.draw_cube(&center_c, &angle);
+            canvas.draw_pyramid(&center_p, &angle);
+        }
+        State::FromZToY => {
+            let center_c = Point3D::new(0 + offset, -100 + offset, 0 - offset);
+            let center_p = Point3D::new(0 - offset, 100 - offset, 0 + offset);
+
+            canvas.draw_cube(&center_c, &angle);
+            canvas.draw_pyramid(&center_p, &angle);
+        }
+    }
 }
 
 fn draw_canvas2(canvas: &mut Canvas) {

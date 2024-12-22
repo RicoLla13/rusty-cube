@@ -39,16 +39,29 @@ impl Vector3D {
         Vector3D { x, y, z }
     }
 
-    pub fn angle_overshoot(&mut self) {
+    pub fn angle_overshoot(&mut self) -> bool {
+        let mut result = false;
+
         if self.x > (2.0 * PI as f32) {
             self.x = 0.0;
+            result = true;
         }
         if self.y > (2.0 * PI as f32) {
             self.y = 0.0;
+            result = true;
         }
         if self.z > (2.0 * PI as f32) {
             self.z = 0.0;
+            result = true;
         }
+
+        result
+    }
+
+    pub fn zero(&mut self) {
+        self.x = 0.0;
+        self.y = 0.0;
+        self.z = 0.0;
     }
 }
 

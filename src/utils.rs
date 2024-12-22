@@ -8,3 +8,13 @@ pub const Y_OFFSET: i32 = (SCREEN_HEIGTH / 2) as i32;
 pub const CUBE_LINE_LEN: i32 = 100;
 pub const PYRA_LINE_LEN: i32 = 100;
 pub const ROTATION: f32 = 0.02;
+
+#[derive(Debug)]
+pub enum State {
+    YAxisRot,
+    FromYToX,
+    XAxisRot,
+    FromXToZ,
+    ZAxisRot,
+    FromZToY,
+}
