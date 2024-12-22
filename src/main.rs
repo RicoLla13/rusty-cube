@@ -14,14 +14,16 @@ use points::*;
 use utils::*;
 
 fn main() {
-    let mut canvas = Canvas::new();
+    let mut context = SdlContext::init();
+    let mut canvas1 = context.new_canvas(&"3D Shapes");
+    let mut canvas2 = context.new_canvas(&"2D Shapes");
 
     let mut frame_count = 0;
 
     let rotation = 0.02;
     let mut angle = Vector3D::new(0.0, 0.0, 0.0);
     'running: loop {
-        for event in canvas.event_pump.poll_iter() {
+        for event in context.event_pump.poll_iter() {
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
@@ -33,30 +35,36 @@ fn main() {
                 _ => {}
             }
         }
-        canvas.clear();
+        canvas1.clear();
+        canvas2.clear();
 
+        // 3D Shapes Window
         let center_c = Point3D::new(70, 0, -70);
         let center_p = Point3D::new(-70, 0, 70);
 
-        canvas.draw_line(
+        canvas1.draw_line(
             &Point3D::new(0, 100, 0),
             &Point3D::new(0, -100, 0),
             Color::RED,
         );
-        canvas.draw_cube(&center_c, &angle);
-        canvas.draw_pyramid(&center_p, &angle);
+        canvas1.draw_cube(&center_c, &angle);
+        canvas1.draw_pyramid(&center_p, &angle);
 
         // angle.x += rotation;
         angle.y += rotation;
         // angle.z += rotation;
         angle.angle_overshoot();
 
+        // 2D Shapes Window
+        canvas2.draw_pixel(Point2D::new(0, 0), Color::BLUE);
+
         frame_count += 1;
         if frame_count > FRAMERATE {
             frame_count = 0;
         }
 
-        canvas.present();
+        canvas1.present();
+        canvas2.present();
         std::thread::sleep(Duration::new(0, FRAMERATE_CALC));
     }
 }

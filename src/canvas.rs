@@ -3,23 +3,38 @@ use sdl2::rect::Rect;
 use sdl2::render::WindowCanvas;
 use sdl2::EventPump;
 use sdl2::Sdl;
+use sdl2::VideoSubsystem;
 
 use crate::points::*;
 use crate::utils::*;
 
-pub struct Canvas {
+pub struct SdlContext {
     sdl_context: Sdl,
-    pub canvas: WindowCanvas,
+    video_subsystem: VideoSubsystem,
     pub event_pump: EventPump,
 }
 
-impl Canvas {
-    pub fn new() -> Self {
+pub struct Canvas {
+    pub canvas: WindowCanvas,
+}
+
+impl SdlContext {
+    pub fn init() -> Self {
         let sdl_context = sdl2::init().unwrap();
         let video_subsystem = sdl_context.video().unwrap();
+        let event_pump = sdl_context.event_pump().unwrap();
 
-        let window = video_subsystem
-            .window(WINDOW_TITLE, SCREEN_WIDTH, SCREEN_HEIGTH)
+        SdlContext {
+            sdl_context,
+            video_subsystem,
+            event_pump,
+        }
+    }
+
+    pub fn new_canvas(&self, title: &str) -> Canvas {
+        let window = self
+            .video_subsystem
+            .window(title, SCREEN_WIDTH, SCREEN_HEIGTH)
             .position_centered()
             .build()
             .unwrap();
@@ -29,15 +44,12 @@ impl Canvas {
         canvas.set_draw_color(Color::BLACK);
         canvas.clear();
         canvas.present();
-        let event_pump = sdl_context.event_pump().unwrap();
 
-        Canvas {
-            sdl_context,
-            canvas,
-            event_pump,
-        }
+        Canvas { canvas }
     }
+}
 
+impl Canvas {
     pub fn draw_pixel(&mut self, pos: Point2D, color: Color) {
         let rect = Rect::new(pos.x, pos.y, PIXEL_SIZE, PIXEL_SIZE);
         self.canvas.set_draw_color(color);
