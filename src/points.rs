@@ -6,6 +6,7 @@ pub struct Vector3D {
     pub z: f32,
 }
 
+#[derive(PartialEq)]
 pub struct Point2D {
     pub x: i32,
     pub y: i32,
@@ -19,9 +20,13 @@ pub struct Point3D {
 }
 
 impl Point2D {
+    pub fn new(x: i32, y: i32) -> Self {
+        Point2D { x, y }
+    }
+
     pub fn from_3d(point_3d: &Point3D) -> Self {
-        let x_new = point_3d.x - point_3d.z + X_OFFSET;
-        let y_new = (point_3d.x + 2 * point_3d.y + point_3d.z) / 2 + Y_OFFSET;
+        let x_new = point_3d.x - point_3d.z + (X_OFFSET as i32);
+        let y_new = (point_3d.x + 2 * point_3d.y + point_3d.z) / 2 + (Y_OFFSET as i32);
 
         Point2D { x: x_new, y: y_new }
     }
