@@ -45,11 +45,49 @@ impl Canvas {
     }
 
     pub fn draw_line(&mut self, start: Point2D, end: Point2D, color: Color) {
-        let slope = if start.x - end.x == 0 {
-            0.0
+        let mut x1 = start.x;
+        let mut y1 = start.y;
+        let mut x2 = end.x;
+        let mut y2 = end.y;
+
+        if start == end {
+            self.draw_pixel(start, color);
+        } else if x1 == x2 {
+            if y1 > y2 {
+                (y1, y2) = (y2, y1);
+            }
+            for y in y1..y2 {
+                self.draw_pixel(Point2D::new(x1, y), color);
+            }
+        } else if y1 == y2 {
+            if x1 > x2 {
+                (x1, x2) = (x2, x1);
+            }
+            for x in x1..x2 {
+                self.draw_pixel(Point2D::new(x, y1), color);
+            }
         } else {
-            (start.x - end.x) as f32
-        };
+            let slope = (y1 - y2) as f32 / (x1 - x2) as f32;
+            if slope <= 1.0 {
+                if x1 > x2 {
+                    (x1, x2) = (x2, x1);
+                    (y1, y2) = (y2, y1);
+                }
+                for x in x1..x2 {
+                    let y = (slope * ((x - x1) as f32) + y1 as f32) as i32;
+                    self.draw_pixel(Point2D::new(x, y), color);
+                }
+            } else {
+                if y1 > y2 {
+                    (x1, x2) = (x2, x1);
+                    (y1, y2) = (y2, y1);
+                }
+                for y in y1..y2 {
+                    let x = (((y - y1) as f32 / slope) + x1 as f32) as i32;
+                    self.draw_pixel(Point2D::new(x, y), color);
+                }
+            }
+        }
     }
 
     pub fn present(&mut self) {
