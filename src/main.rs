@@ -16,6 +16,11 @@ use utils::*;
 fn main() {
     let mut canvas = Canvas::new();
 
+    let mut frame_count = 0;
+    let mut state: u16 = 0;
+
+    let rotation = 0.05;
+    let mut angle = Vector3D::new(0.0, 0.0, 0.0);
     'running: loop {
         for event in canvas.event_pump.poll_iter() {
             match event {
@@ -29,23 +34,42 @@ fn main() {
                 _ => {}
             }
         }
+        canvas.clear();
 
-        let pos = Point3D::new(0, 0, 0);
-        canvas.draw_pixel(Point2D::from_3d(&pos), Color::WHITE);
+        let center = Point3D::new(0, 0, 0);
+        canvas.draw_pixel(Point2D::from_3d(&center), Color::WHITE);
 
-        // Test for equal x
-        canvas.draw_line(Point2D::new(50, 10), Point2D::new(50, 70), Color::WHITE);
-        canvas.draw_line(Point2D::new(100, 70), Point2D::new(100, 10), Color::WHITE);
+        canvas.draw_cube(&center, &angle);
 
-        // Test for equal y
-        canvas.draw_line(Point2D::new(50, 100), Point2D::new(150, 100), Color::WHITE);
-        canvas.draw_line(Point2D::new(150, 110), Point2D::new(50, 110), Color::WHITE);
+        match state {
+            0 => {
+                angle.x += rotation;
+                angle.y = 0.0;
+                angle.z = 0.0;
+            }
+            1 => {
+                angle.x = 0.0;
+                angle.y += rotation;
+                angle.z = 0.0;
+            }
+            _ => {
+                angle.x = 0.0;
+                angle.y = 0.0;
+                angle.z += rotation;
+            }
+        }
 
-        // Test shallow line
-        canvas.draw_line(Point2D::new(20, 30), Point2D::new(100, 50), Color::WHITE);
-        canvas.draw_line(Point2D::new(30, 20), Point2D::new(50, 100), Color::WHITE);
+        frame_count += 1;
+        println!("Frame: {}", frame_count);
+        if frame_count > FRAMERATE {
+            frame_count = 0;
+            state += 1;
+            if state > 2 {
+                state = 0;
+            }
+        }
 
         canvas.present();
-        std::thread::sleep(Duration::new(0, FRAMERATE));
+        std::thread::sleep(Duration::new(0, FRAMERATE_CALC));
     }
 }
