@@ -1,6 +1,7 @@
 extern crate sdl2;
 
 use sdl2::event::Event;
+use sdl2::event::WindowEvent;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use std::time::Duration;
@@ -25,13 +26,15 @@ fn main() {
     'running: loop {
         for event in context.event_pump.poll_iter() {
             match event {
-                Event::Quit { .. }
-                | Event::KeyDown {
+                Event::Quit { .. } => break 'running,
+                Event::Window {
+                    win_event: WindowEvent::Close,
+                    ..
+                } => break 'running,
+                Event::KeyDown {
                     keycode: Some(Keycode::Escape),
                     ..
-                } => {
-                    break 'running;
-                }
+                } => break 'running,
                 _ => {}
             }
         }
@@ -57,8 +60,29 @@ fn main() {
 
         // 2D Shapes Window
         let center_circ = Point2D::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGTH as i32 / 2);
+        let radius = 50;
         canvas2.draw_pixel(&center_circ, Color::RED);
-        canvas2.draw_circle(&center_circ, 50, Color::WHITE);
+        canvas2.draw_circle(&center_circ, radius, Color::WHITE);
+        canvas2.draw_line_2d(
+            &center_circ,
+            &Point2D::new(center_circ.x, center_circ.y + 2 * radius),
+            Color::RGB(252, 128, 5),
+        );
+        canvas2.draw_line_2d(
+            &center_circ,
+            &Point2D::new(center_circ.x, center_circ.y - 2 * radius),
+            Color::RGB(252, 128, 5),
+        );
+        canvas2.draw_line_2d(
+            &center_circ,
+            &Point2D::new(center_circ.x + 2 * radius, center_circ.y),
+            Color::RGB(252, 128, 5),
+        );
+        canvas2.draw_line_2d(
+            &center_circ,
+            &Point2D::new(center_circ.x - 2 * radius, center_circ.y),
+            Color::RGB(252, 128, 5),
+        );
 
         frame_count += 1;
         if frame_count > FRAMERATE {
