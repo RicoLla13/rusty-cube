@@ -27,8 +27,8 @@ impl Point2D {
     }
 
     pub fn from_3d(point_3d: &Point3D) -> Self {
-        let x_new = point_3d.x - point_3d.z + (X_OFFSET as i32);
-        let y_new = (point_3d.x + 2 * point_3d.y + point_3d.z) / 2 + (Y_OFFSET as i32);
+        let x_new = point_3d.x - point_3d.z + X_OFFSET;
+        let y_new = (point_3d.x + 2 * point_3d.y + point_3d.z) / 2 + Y_OFFSET;
 
         Point2D { x: x_new, y: y_new }
     }

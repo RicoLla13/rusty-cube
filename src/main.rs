@@ -42,7 +42,7 @@ fn main() {
         let center_c = Point3D::new(70, 0, -70);
         let center_p = Point3D::new(-70, 0, 70);
 
-        canvas1.draw_line(
+        canvas1.draw_line_3d(
             &Point3D::new(0, 100, 0),
             &Point3D::new(0, -100, 0),
             Color::RED,
@@ -56,7 +56,9 @@ fn main() {
         angle.angle_overshoot();
 
         // 2D Shapes Window
-        canvas2.draw_pixel(Point2D::new(0, 0), Color::BLUE);
+        let center_circ = Point2D::new(SCREEN_WIDTH as i32 / 2, SCREEN_HEIGTH as i32 / 2);
+        canvas2.draw_pixel(&center_circ, Color::RED);
+        canvas2.draw_circle(&center_circ, 50, Color::WHITE);
 
         frame_count += 1;
         if frame_count > FRAMERATE {

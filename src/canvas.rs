@@ -9,7 +9,6 @@ use crate::points::*;
 use crate::utils::*;
 
 pub struct SdlContext {
-    sdl_context: Sdl,
     video_subsystem: VideoSubsystem,
     pub event_pump: EventPump,
 }
@@ -25,7 +24,6 @@ impl SdlContext {
         let event_pump = sdl_context.event_pump().unwrap();
 
         SdlContext {
-            sdl_context,
             video_subsystem,
             event_pump,
         }
@@ -50,20 +48,42 @@ impl SdlContext {
 }
 
 impl Canvas {
-    pub fn draw_pixel(&mut self, pos: Point2D, color: Color) {
+    pub fn draw_pixel(&mut self, pos: &Point2D, color: Color) {
         let rect = Rect::new(pos.x, pos.y, PIXEL_SIZE, PIXEL_SIZE);
         self.canvas.set_draw_color(color);
         self.canvas.fill_rect(rect).unwrap();
     }
 
-    pub fn draw_line(&mut self, start: &Point3D, end: &Point3D, color: Color) {
-        let start_2d = Point2D::from_3d(start);
-        let end_2d = Point2D::from_3d(end);
+    pub fn draw_circle(&mut self, center: &Point2D, radius: i32, color: Color) {
+        let mut x: i32 = 0;
+        let mut y: i32 = radius;
+        let mut p = 1 - radius;
 
-        let mut x1 = start_2d.x;
-        let mut y1 = start_2d.y;
-        let x2 = end_2d.x;
-        let y2 = end_2d.y;
+        while x <= y {
+            self.draw_pixel(&Point2D::new(center.x + x, center.y + y), color);
+            self.draw_pixel(&Point2D::new(center.x - x, center.y + y), color);
+            self.draw_pixel(&Point2D::new(center.x + x, center.y - y), color);
+            self.draw_pixel(&Point2D::new(center.x - x, center.y - y), color);
+            self.draw_pixel(&Point2D::new(center.x + y, center.y + x), color);
+            self.draw_pixel(&Point2D::new(center.x - y, center.y + x), color);
+            self.draw_pixel(&Point2D::new(center.x + y, center.y - x), color);
+            self.draw_pixel(&Point2D::new(center.x - y, center.y - x), color);
+
+            if p < 0 {
+                p += 2 * x + 3;
+            } else {
+                p += 2 * x - 2 * y + 5;
+                y -= 1;
+            }
+            x += 1;
+        }
+    }
+
+    pub fn draw_line_2d(&mut self, start: &Point2D, end: &Point2D, color: Color) {
+        let mut x1 = start.x;
+        let mut y1 = start.y;
+        let x2 = end.x;
+        let y2 = end.y;
 
         let dx = (x2 - x1).abs();
         let dy = (y2 - y1).abs();
@@ -74,7 +94,7 @@ impl Canvas {
         let mut err = dx - dy;
 
         loop {
-            self.draw_pixel(Point2D::new(x1, y1), color);
+            self.draw_pixel(&Point2D::new(x1, y1), color);
 
             if x1 == x2 && y1 == y2 {
                 break;
@@ -90,6 +110,13 @@ impl Canvas {
                 y1 += sy;
             }
         }
+    }
+
+    pub fn draw_line_3d(&mut self, start: &Point3D, end: &Point3D, color: Color) {
+        let start_2d = Point2D::from_3d(start);
+        let end_2d = Point2D::from_3d(end);
+
+        self.draw_line_2d(&start_2d, &end_2d, color);
     }
 
     pub fn draw_cube(&mut self, center: &Point3D, angle: &Vector3D) {
@@ -120,7 +147,7 @@ impl Canvas {
         ];
 
         for &(start_ind, end_ind) in edges.iter() {
-            self.draw_line(&points[start_ind], &points[end_ind], Color::WHITE);
+            self.draw_line_3d(&points[start_ind], &points[end_ind], Color::WHITE);
         }
     }
 
@@ -147,7 +174,7 @@ impl Canvas {
         ];
 
         for &(start_ind, end_ind) in edges.iter() {
-            self.draw_line(&points[start_ind], &points[end_ind], Color::WHITE);
+            self.draw_line_3d(&points[start_ind], &points[end_ind], Color::WHITE);
         }
     }
 
