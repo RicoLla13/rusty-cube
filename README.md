@@ -1,3 +1,3 @@
-# Rusty Cube
+# Rusty Shapes
 
-Built with Rust and raylib, 3D graphics translations done by myself.
+Built with Rust and SDL2, 3D graphics translations and elements drawing done by myself.

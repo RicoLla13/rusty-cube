@@ -60,7 +60,6 @@ fn main() {
         }
 
         frame_count += 1;
-        println!("Frame: {}", frame_count);
         if frame_count > FRAMERATE {
             frame_count = 0;
             state += 1;
