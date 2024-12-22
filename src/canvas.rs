@@ -79,6 +79,17 @@ impl Canvas {
         }
     }
 
+    pub fn draw_rect(&mut self, start: &Point2D, width: i32, height: i32, color: Color) {
+        let right_up = Point2D::new(start.x + width, start.y);
+        let right_down = Point2D::new(start.x + width, start.y + height);
+        let left_down = Point2D::new(start.x, start.y + height);
+
+        self.draw_line_2d(start, &right_up, color);
+        self.draw_line_2d(start, &left_down, color);
+        self.draw_line_2d(&right_up, &right_down, color);
+        self.draw_line_2d(&left_down, &right_down, color);
+    }
+
     pub fn draw_line_2d(&mut self, start: &Point2D, end: &Point2D, color: Color) {
         let mut x1 = start.x;
         let mut y1 = start.y;
