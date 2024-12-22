@@ -47,47 +47,35 @@ impl Canvas {
     pub fn draw_line(&mut self, start: &Point3D, end: &Point3D, color: Color) {
         let start_2d = Point2D::from_3d(start);
         let end_2d = Point2D::from_3d(end);
+
         let mut x1 = start_2d.x;
         let mut y1 = start_2d.y;
-        let mut x2 = end_2d.x;
-        let mut y2 = end_2d.y;
+        let x2 = end_2d.x;
+        let y2 = end_2d.y;
 
-        if start_2d == end_2d {
-            self.draw_pixel(start_2d, color);
-        } else if x1 == x2 {
-            if y1 > y2 {
-                (y1, y2) = (y2, y1);
+        let dx = (x2 - x1).abs();
+        let dy = (y2 - y1).abs();
+
+        let sx = if x1 < x2 { 1 } else { -1 };
+        let sy = if y1 < y2 { 1 } else { -1 };
+
+        let mut err = dx - dy;
+
+        loop {
+            self.draw_pixel(Point2D::new(x1, y1), color);
+
+            if x1 == x2 && y1 == y2 {
+                break;
             }
-            for y in y1..y2 {
-                self.draw_pixel(Point2D::new(x1, y), color);
+
+            let e2 = 2 * err;
+            if e2 > -dy {
+                err -= dy;
+                x1 += sx;
             }
-        } else if y1 == y2 {
-            if x1 > x2 {
-                (x1, x2) = (x2, x1);
-            }
-            for x in x1..x2 {
-                self.draw_pixel(Point2D::new(x, y1), color);
-            }
-        } else {
-            let slope = (y1 - y2) as f32 / (x1 - x2) as f32;
-            if slope <= 1.0 {
-                if x1 > x2 {
-                    (x1, x2) = (x2, x1);
-                    (y1, y2) = (y2, y1);
-                }
-                for x in x1..x2 {
-                    let y = (slope * ((x - x1) as f32) + y1 as f32) as i32;
-                    self.draw_pixel(Point2D::new(x, y), color);
-                }
-            } else {
-                if y1 > y2 {
-                    (x1, x2) = (x2, x1);
-                    (y1, y2) = (y2, y1);
-                }
-                for y in y1..y2 {
-                    let x = (((y - y1) as f32 / slope) + x1 as f32) as i32;
-                    self.draw_pixel(Point2D::new(x, y), color);
-                }
+            if e2 < dx {
+                err += dx;
+                y1 += sy;
             }
         }
     }
@@ -96,8 +84,8 @@ impl Canvas {
         let mut points = Point3D::cube_vertices(center);
 
         for point in points.iter_mut() {
-            point.rotate_y(angle.x);
-            point.rotate_x(angle.y);
+            point.rotate_x(angle.x);
+            point.rotate_y(angle.y);
             point.rotate_z(angle.z);
         }
 
@@ -125,7 +113,13 @@ impl Canvas {
     }
 
     pub fn draw_pyramid(&mut self, center: &Point3D, angle: &Vector3D) {
-        let points = Point3D::pyramid_vertices(center);
+        let mut points = Point3D::pyramid_vertices(center);
+
+        for point in points.iter_mut() {
+            point.rotate_x(angle.x);
+            point.rotate_y(angle.y);
+            point.rotate_z(angle.z);
+        }
 
         let edges = [
             // Base

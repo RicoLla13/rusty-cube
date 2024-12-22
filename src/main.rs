@@ -17,9 +17,8 @@ fn main() {
     let mut canvas = Canvas::new();
 
     let mut frame_count = 0;
-    let mut state: u16 = 0;
 
-    let rotation = 0.05;
+    let rotation = 0.02;
     let mut angle = Vector3D::new(0.0, 0.0, 0.0);
     'running: loop {
         for event in canvas.event_pump.poll_iter() {
@@ -36,37 +35,25 @@ fn main() {
         }
         canvas.clear();
 
-        let center = Point3D::new(0, 0, 0);
+        let center_c = Point3D::new(70, 0, -70);
+        let center_p = Point3D::new(-70, 0, 70);
 
-        // canvas.draw_cube(&center, &angle);
-        canvas.draw_pyramid(&center, &Vector3D::new(0.0, 0.0, 0.0));
-        canvas.draw_pixel(Point2D::from_3d(&center), Color::RED);
+        canvas.draw_line(
+            &Point3D::new(0, 100, 0),
+            &Point3D::new(0, -100, 0),
+            Color::RED,
+        );
+        canvas.draw_cube(&center_c, &angle);
+        canvas.draw_pyramid(&center_p, &angle);
 
-        match state {
-            0 => {
-                angle.x += rotation;
-                angle.y = 0.0;
-                angle.z = 0.0;
-            }
-            1 => {
-                angle.x = 0.0;
-                angle.y += rotation;
-                angle.z = 0.0;
-            }
-            _ => {
-                angle.x = 0.0;
-                angle.y = 0.0;
-                angle.z += rotation;
-            }
-        }
+        // angle.x += rotation;
+        angle.y += rotation;
+        // angle.z += rotation;
+        angle.angle_overshoot();
 
         frame_count += 1;
         if frame_count > FRAMERATE {
             frame_count = 0;
-            state += 1;
-            if state > 2 {
-                state = 0;
-            }
         }
 
         canvas.present();

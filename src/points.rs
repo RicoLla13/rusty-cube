@@ -1,5 +1,7 @@
 use crate::utils::*;
 
+use std::f64::consts::PI;
+
 pub struct Vector3D {
     pub x: f32,
     pub y: f32,
@@ -35,6 +37,18 @@ impl Point2D {
 impl Vector3D {
     pub fn new(x: f32, y: f32, z: f32) -> Self {
         Vector3D { x, y, z }
+    }
+
+    pub fn angle_overshoot(&mut self) {
+        if self.x > (2.0 * PI as f32) {
+            self.x = 0.0;
+        }
+        if self.y > (2.0 * PI as f32) {
+            self.y = 0.0;
+        }
+        if self.z > (2.0 * PI as f32) {
+            self.z = 0.0;
+        }
     }
 }
 
